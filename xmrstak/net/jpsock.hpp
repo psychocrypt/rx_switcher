@@ -1,7 +1,6 @@
 #pragma once
 
 #include "msgstruct.hpp"
-#include "xmrstak/backend/iBackend.hpp"
 #include "xmrstak/jconf.hpp"
 
 #include <atomic>
@@ -34,7 +33,6 @@ class jpsock
 	void disconnect(bool quiet = false);
 
 	bool cmd_login();
-	bool cmd_submit(const char* sJobId, uint32_t iNonce, const uint8_t* bResult, const char* backend_name, uint64_t backend_hashcount, uint64_t total_hashcount, const xmrstak_algo& algo);
 
 	static bool hex2bin(const char* in, unsigned int len, unsigned char* out);
 	static void bin2hex(const unsigned char* in, unsigned int len, char* out);
@@ -70,7 +68,6 @@ class jpsock
 	bool have_sock_error() { return bHaveSocketError; }
 	inline uint64_t get_current_diff() { return iJobDiff; }
 
-	void save_nonce(uint32_t nonce);
 	bool get_current_job(pool_job& job);
 
 	bool set_socket_error(const char* a);

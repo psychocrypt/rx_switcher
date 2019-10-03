@@ -1,23 +1,12 @@
 #pragma once
 
 #include "xmrstak/misc/environment.hpp"
-#include "xmrstak/misc/home_dir.hpp"
 
 #include <vector>
 #include <cstdint>
 
 namespace xmrstak
 {
-
-struct system_entry
-{
-	system_entry( const std::string make_value, const size_t threads) :
-		make(make_value), num_threads(threads)
-	{}
-
-	std::string make;
-	size_t num_threads;
-};
 
 struct params
 {
@@ -34,69 +23,16 @@ struct params
 		return *env.pParams;
 	}
 
-	std::string executablePrefix;
-	std::string binaryName;
-	bool useAMD;
-	bool AMDCache;
-	bool useNVIDIA;
-	bool useCPU;
-	std::string amdGpus;
-	std::string nvidiaGpus;
-	// user selected OpenCL vendor
-	std::string openCLVendor;
-
-	bool poolUseTls = false;
-	std::string poolURL;
-	bool userSetPwd = false;
-	std::string poolPasswd;
-	bool userSetRigid = false;
-	std::string poolRigid;
-	std::string poolUsername;
-	bool nicehashMode = false;
-
-	static constexpr int32_t httpd_port_unset = -1;
-	static constexpr int32_t httpd_port_disabled = 0;
-	int32_t httpd_port = httpd_port_unset;
-
-	std::string currency;
 
 	std::string configFile;
 	std::string configFilePools;
-	std::string configFileAMD;
-	std::string rootAMDCacheDir;
-	std::string configFileNVIDIA;
-	std::string configFileCPU;
 
 	std::string outputFile;
-	int h_print_time = -1;
 
-	bool allowUAC = true;
-	std::string minerArg0;
-	std::string minerArgs;
-
-	// block_version >= 0 enable benchmark
-	int benchmark_block_version = -1;
-	int benchmark_wait_sec = 30;
-	int benchmark_work_sec = 60;
-
-	std::vector<system_entry> cpu_devices;
-	std::vector<system_entry> cuda_devices;
-	std::vector<system_entry> opencl_devices;
 
 	params() :
-		binaryName("xmr-stak"),
-		executablePrefix(""),
-		useAMD(true),
-		AMDCache(true),
-		useNVIDIA(true),
-		useCPU(true),
-		openCLVendor("AMD"),
 		configFile("config.txt"),
-		configFilePools("pools.txt"),
-		configFileAMD("amd.txt"),
-		rootAMDCacheDir(get_home() + "/.openclcache/"),
-		configFileCPU("cpu.txt"),
-		configFileNVIDIA("nvidia.txt")
+		configFilePools("pools.txt")
 	{
 	}
 };

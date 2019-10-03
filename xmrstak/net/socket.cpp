@@ -26,7 +26,6 @@
 #include "xmrstak/jconf.hpp"
 #include "xmrstak/misc/console.hpp"
 #include "xmrstak/misc/executor.hpp"
-#include "xmrstak/misc/motd.hpp"
 #include "xmrstak/version.hpp"
 
 #ifndef CONF_NO_TLS
@@ -410,107 +409,7 @@ void tls_socket_t<T>::close(bool free)
 	}
 }
 
-std::string entry_vector_to_json(const std::string category, const std::vector<xmrstak::system_entry> vec)
-{
-	std::string json;
-	json += "\"" + category + "\" : [";
-	int count = 0;
-	for( auto const e : vec)
-	{
-		if(count++ != 0)
-			json += ",";
-		json += "{";
-		json += "\"make\" : \"" + e.make+ "\", ";
-		json += "\"threads\" : " + std::to_string(e.num_threads);
-		json += "}";
-	}
-	json += "]";
-
-	return json;
-}
-
-inline void get_motd()
-{
-	callback_holder ch;
-	tls_socket_t<callback_holder> socket(&ch);
-	if(!socket.set_hostname("donate.xmr-stak.net:14441"))
-	{
-		printer::inst()->print_msg(LDEBUG, "Motd server set hostname error!\n");
-		socket.close(true);
-		return;
-	}
-	if(!socket.connect())
-	{
-		printer::inst()->print_msg(LDEBUG, "Connecting to motd server failed!\n");
-		socket.close(true);
-		return;
-	}
-
-	std::string json;
-
-	if(!xmrstak::params::inst().cpu_devices.empty())
-		json += entry_vector_to_json("cpu", xmrstak::params::inst().cpu_devices);
-
-	if(!xmrstak::params::inst().cuda_devices.empty())
-	{
-		if(!json.empty())
-			json += ",";
-		json += entry_vector_to_json("cuda", xmrstak::params::inst().cuda_devices);
-	}
-
-	if(!xmrstak::params::inst().opencl_devices.empty())
-	{
-		if(!json.empty())
-			json += ",";
-		json += entry_vector_to_json("opencl", xmrstak::params::inst().opencl_devices);
-	}
-
-	const std::string user_agent =
-		std::string("{ \"version\" : \"") + get_version_str() + "\", " +
-		std::string("\"algo\" : \"") + ::jconf::inst()->GetCurrentCoinSelection().GetDescription().GetMiningAlgo().Name() + "\", " +
-		std::string("\"system\" : {") + json + "}}";
-
-	printer::inst()->print_msg(LDEBUG, "%s",user_agent.c_str());
-
-
-	socket.send(user_agent.data());
-
-	char buffer[2048];
-	std::string motd;
-	while(true)
-	{
-		int recv = socket.recv(buffer, sizeof(buffer));
-		if(recv > 0)
-		{
-			buffer[recv] = 0;
-			motd.append(buffer, recv + 1);
-			continue;
-		}
-		break;
-	}
-	socket.close(true);
-
-	if(motd.size() > 0)
-		xmrstak::motd::inst().set_message(std::move(motd));
-	else
-		printer::inst()->print_msg(LDEBUG, "Error receiving motd!");
-}
-
-void update_motd(bool force)
-{
-	static size_t timestamp = 0u;
-	if(force || timestamp == 0u || (get_timestamp() - timestamp > 60*60))
-	{
-		std::thread motd_thd(&get_motd);
-		motd_thd.detach();
-		timestamp = get_timestamp();
-	}
-}
 template class tls_socket_t<callback_holder>;
 template class tls_socket_t<jpsock>;
-#else
-void update_motd(bool)
-{
 
-}
 #endif

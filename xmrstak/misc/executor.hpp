@@ -1,9 +1,7 @@
 #pragma once
 
-#include "telemetry.hpp"
+
 #include "thdq.hpp"
-#include "xmrstak/backend/iBackend.hpp"
-#include "xmrstak/donate-level.hpp"
 #include "xmrstak/misc/environment.hpp"
 #include "xmrstak/net/msgstruct.hpp"
 
@@ -40,7 +38,7 @@ class executor
 		return env.pExecutor;
 	};
 
-	void ex_start(bool daemon) { daemon ? ex_main() : std::thread(&executor::ex_main, this).detach(); }
+	void ex_start() { ex_main(); }
 
 	void get_http_report(ex_event_name ev_id, std::string& data);
 
@@ -65,12 +63,11 @@ class executor
 	std::mutex timed_event_mutex;
 	thdq<ex_event> oEventQ;
 
-	xmrstak::telemetry* telem;
-	std::vector<xmrstak::iBackend*>* pvThreads;
-
+	static constexpr size_t invalid_pool_id = -1;
 	size_t current_pool_id = invalid_pool_id;
 
 	std::list<jpsock> pools;
+	size_t epool_id = invalid_pool_id;
 
 	jpsock* pick_pool_by_id(size_t pool_id);
 
@@ -80,26 +77,6 @@ class executor
 
 	void ex_clock_thd();
 	void pool_connect(jpsock* pool);
-
-	constexpr static size_t motd_max_length = 512;
-	bool motd_filter_console(std::string& motd);
-	bool motd_filter_web(std::string& motd);
-
-	void hashrate_report(std::string& out);
-	void result_report(std::string& out);
-	void connection_report(std::string& out);
-
-	void http_hashrate_report(std::string& out);
-	void http_result_report(std::string& out);
-	void http_connection_report(std::string& out);
-	void http_json_report(std::string& out);
-
-	void http_report(ex_event_name ev);
-	void print_report(ex_event_name ev);
-
-	std::string* pHttpString = nullptr;
-	std::promise<void> httpReady;
-	std::mutex httpMutex;
 
 	struct sck_error_log
 	{
@@ -150,37 +127,14 @@ class executor
 				return false;
 		}
 	};
-	std::vector<result_tally> vMineResults;
-
-	//More result statistics
-	std::array<size_t, 10> iTopDiff{{}}; //Initialize to zero
 
 	std::chrono::system_clock::time_point tPoolConnTime;
-	size_t iPoolHashes = 0;
-	uint64_t iPoolDiff = 0;
-
-	// Set it to 16 bit so that we can just let it grow
-	// Maximum realistic growth rate - 5MB / month
-	std::vector<uint16_t> iPoolCallTimes;
-
-	//Those stats are reset if we disconnect
-	inline void reset_stats()
-	{
-		iPoolCallTimes.clear();
-		tPoolConnTime = std::chrono::system_clock::now();
-		iPoolHashes = 0;
-	}
-
-	double fHighestHps = 0.0;
 
 	void log_socket_error(jpsock* pool, std::string&& sError);
-	void log_result_error(std::string&& sError);
-	void log_result_ok(uint64_t iActualDiff);
 
 	void on_sock_ready(size_t pool_id);
 	void on_sock_error(size_t pool_id, std::string&& sError, bool silent);
 	void on_pool_have_job(size_t pool_id, pool_job& oPoolJob);
-	void on_miner_result(size_t pool_id, job_result& oResult);
 	void connect_to_pools(std::list<jpsock*>& eval_pools);
 	bool get_live_pools(std::vector<jpsock*>& eval_pools);
 	void eval_pool_choice();

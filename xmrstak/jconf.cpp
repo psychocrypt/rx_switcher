@@ -26,7 +26,6 @@
 
 #include "xmrstak/misc/console.hpp"
 #include "xmrstak/misc/jext.hpp"
-#include "xmrstak/misc/utility.hpp"
 
 #include <algorithm>
 #include <math.h>
@@ -57,7 +56,6 @@ enum configEnum
 	iNetRetry,
 	iGiveUpLimit,
 	iVerboseLevel,
-	bPrintMotd,
 	iAutohashTime,
 	bDaemonMode,
 	sOutputFile,
@@ -86,7 +84,6 @@ configVal oConfigValues[] = {
 	{iNetRetry, "retry_time", kNumberType},
 	{iGiveUpLimit, "giveup_limit", kNumberType},
 	{iVerboseLevel, "verbose_level", kNumberType},
-	{bPrintMotd, "print_motd", kTrueType},
 	{iAutohashTime, "h_print_time", kNumberType},
 	{bDaemonMode, "daemon_mode", kTrueType},
 	{sOutputFile, "output_file", kStringType},
@@ -98,15 +95,6 @@ configVal oConfigValues[] = {
 	{sUseSlowMem, "use_slow_memory", kStringType}};
 
 constexpr size_t iConfigCnt = (sizeof(oConfigValues) / sizeof(oConfigValues[0]));
-
-xmrstak::coin_selection coins[] = {
-	// name, userpool, devpool, default_pool_suggestion
-	{"randomx", {POW(randomX)}, {POW(randomX)}, nullptr},
-	{"randomx_loki", {POW(randomX_loki)}, {POW(randomX_loki)}, nullptr},
-	{"randomx_wow", {POW(randomX_wow)}, {POW(randomX_wow)}, nullptr}
-};
-
-constexpr size_t coin_algo_size = (sizeof(coins) / sizeof(coins[0]));
 
 inline bool checkType(Type have, Type want)
 {
@@ -216,25 +204,10 @@ uint64_t jconf::GetVerboseLevel()
 	return prv->configValues[iVerboseLevel]->GetUint64();
 }
 
-bool jconf::PrintMotd()
-{
-	return prv->configValues[bPrintMotd]->GetBool();
-}
-
-uint64_t jconf::GetAutohashTime()
-{
-	if (xmrstak::params::inst().h_print_time == -1)
-		return prv->configValues[iAutohashTime]->GetUint64();
-	else
-		return uint64_t(xmrstak::params::inst().h_print_time);
-}
 
 uint16_t jconf::GetHttpdPort()
 {
-	if(xmrstak::params::inst().httpd_port == xmrstak::params::httpd_port_unset)
-		return prv->configValues[iHttpdPort]->GetUint();
-	else
-		return uint16_t(xmrstak::params::inst().httpd_port);
+	return prv->configValues[iHttpdPort]->GetUint();
 }
 
 const char* jconf::GetHttpUsername()
@@ -302,54 +275,6 @@ jconf::slow_mem_cfg jconf::GetSlowMemSetting()
 		return unknown_value;
 }
 
-std::string jconf::GetMiningCoin()
-{
-	if(xmrstak::params::inst().currency.length() > 0)
-		return xmrstak::params::inst().currency;
-	else
-		return prv->configValues[sCurrency]->GetString();
-}
-
-void jconf::GetAlgoList(std::string& list)
-{
-	list.reserve(256);
-	for(size_t i = 0; i < coin_algo_size; i++)
-	{
-		list += "\t- ";
-		list += coins[i].coin_name;
-		list += "\n";
-	}
-}
-
-bool jconf::IsOnAlgoList(std::string& needle)
-{
-	std::transform(needle.begin(), needle.end(), needle.begin(), ::tolower);
-
-	for(size_t i = 0; i < coin_algo_size; i++)
-	{
-		if(needle == coins[i].coin_name)
-			return true;
-	}
-	return false;
-}
-
-const char* jconf::GetDefaultPool(const char* needle)
-{
-	const char* default_example = "pool.example.com:3333";
-
-	for(size_t i = 0; i < coin_algo_size; i++)
-	{
-		if(strcmp(needle, coins[i].coin_name) == 0)
-		{
-			if(coins[i].default_pool != nullptr)
-				return coins[i].default_pool;
-			else
-				return default_example;
-		}
-	}
-
-	return default_example;
-}
 
 bool jconf::parse_file(const char* sFilename, bool main_conf)
 {
@@ -561,13 +486,6 @@ bool jconf::parse_config(const char* sFilename, const char* sFilenamePools)
 		return false;
 	}
 
-	if(!prv->configValues[iVerboseLevel]->IsUint64() || !prv->configValues[iAutohashTime]->IsUint64())
-	{
-		printer::inst()->print_msg(L0,
-			"Invalid config file. verbose_level and h_print_time need to be positive integers.");
-		return false;
-	}
-
 	if(!prv->configValues[iHttpdPort]->IsUint() || prv->configValues[iHttpdPort]->GetUint() > 0xFFFF)
 	{
 		printer::inst()->print_msg(L0,
@@ -598,31 +516,6 @@ bool jconf::parse_config(const char* sFilename, const char* sFilenamePools)
 	}
 #endif // _WIN32
 
-	std::string ctmp = GetMiningCoin();
-	std::transform(ctmp.begin(), ctmp.end(), ctmp.begin(), ::tolower);
-
-	if(ctmp.length() == 0)
-	{
-		printer::inst()->print_msg(L0, "You need to specify the coin that you want to mine.");
-		return false;
-	}
-
-	for(size_t i = 0; i < coin_algo_size; i++)
-	{
-		if(ctmp == coins[i].coin_name)
-		{
-			currentCoin = coins[i];
-			break;
-		}
-	}
-
-	if(currentCoin.GetDescription().GetMiningAlgo() == invalid_algo)
-	{
-		std::string cl;
-		GetAlgoList(cl);
-		printer::inst()->print_msg(L0, "Unrecognised coin '%s', your options are:\n%s", ctmp.c_str(), cl.c_str());
-		return false;
-	}
 
 	return true;
 }

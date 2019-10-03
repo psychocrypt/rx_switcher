@@ -1,7 +1,6 @@
 #pragma once
 
 #include "params.hpp"
-#include "xmrstak/misc/coinDescription.hpp"
 #include "xmrstak/misc/environment.hpp"
 
 #include <stdlib.h>
@@ -54,17 +53,7 @@ class jconf
 
 	bool TlsSecureAlgos();
 
-	inline xmrstak::coin_selection GetCurrentCoinSelection() const { return currentCoin; }
-
-	std::string GetMiningCoin();
-
-	static void GetAlgoList(std::string& list);
-	static bool IsOnAlgoList(std::string& needle);
-	static const char* GetDefaultPool(const char* needle);
-
 	uint64_t GetVerboseLevel();
-	bool PrintMotd();
-	uint64_t GetAutohashTime();
 
 	const char* GetOutputFile();
 
@@ -96,5 +85,4 @@ class jconf
 	opaque_private* prv;
 
 	bool bHaveAes;
-	xmrstak::coin_selection currentCoin;
 };

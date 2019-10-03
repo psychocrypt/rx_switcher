@@ -25,7 +25,6 @@ struct environment
 			if(init == nullptr)
 			{
 				env = new environment;
-				env->init_singeltons();
 			}
 			else
 				env = init;
@@ -39,17 +38,11 @@ struct environment
 	}
 
 	printer* pPrinter = nullptr;
-	globalStates* pglobalStates = nullptr;
 	jconf* pJconfConfig = nullptr;
 	executor* pExecutor = nullptr;
 	params* pParams = nullptr;
-	randomX_global_ctx* pGlobalCtx = nullptr;
-	motd* pMotd = nullptr;
 
 	std::mutex update;
-
-private:
-	void init_singeltons();
 };
 
 } // namespace xmrstak
