@@ -42,7 +42,6 @@
 
 #ifdef _WIN32
 #define strcasecmp _stricmp
-#include "xmrstak/misc/uac.hpp"
 #include <windows.h>
 #endif // _WIN32
 

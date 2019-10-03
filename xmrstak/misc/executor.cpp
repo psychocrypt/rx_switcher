@@ -293,10 +293,13 @@ inline void disable_sigpipe()
 #endif
 
 
+#ifndef _WIN32
 void stop_xmrstak()
 {
 	printer::inst()->print_msg(L0, "Stop all instances of xmr-stak");
-	execl("/usr/bin", "killall", "-9", "xmr-stak", NULL);
+	std::system("killall -9 xmr-stak");
+	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	std::system("xmr-stak should be stopped now.");
 }
 
 void start_xmrstakrx()
@@ -304,6 +307,92 @@ void start_xmrstakrx()
 	printer::inst()->print_msg(L0, "start xmr-stak-rx");
 	execl("xmr-stak-rx", "xmr-stak-rx", NULL);
 }
+#else
+#include <windows.h>
+#include <cstdio>
+#include <tchar.h>
+#include <psapi.h>
+#include <process.h>
+
+void checkPID( DWORD processID )
+{
+    TCHAR szProcessName[MAX_PATH] = TEXT("<unknown>");
+
+    // Get a handle to the process.
+
+    HANDLE hProcess = OpenProcess( PROCESS_QUERY_INFORMATION |
+                                   PROCESS_VM_READ | PROCESS_TERMINATE,
+                                   FALSE, processID );
+
+    // Get the process name.
+
+    if (NULL != hProcess )
+    {
+        HMODULE hMod;
+        DWORD cbNeeded;
+
+        if ( EnumProcessModules( hProcess, &hMod, sizeof(hMod),
+             &cbNeeded) )
+        {
+            GetModuleBaseName( hProcess, hMod, szProcessName,
+                               sizeof(szProcessName)/sizeof(TCHAR) );
+        }
+    }
+
+	std::string pName = szProcessName;
+	std::size_t found = pName.find("xmr-stak");
+    if(found != std::string::npos)
+	{
+	    _tprintf( TEXT("kill %s  (PID: %u)\n"), szProcessName, processID );
+		uint32_t ret;
+		TerminateProcess(hProcess, ret);
+	}
+
+    // Release the handle to the process.
+
+    CloseHandle( hProcess );
+}
+
+void stop_xmrstak()
+{
+	DWORD aProcesses[1024], cbNeeded, cProcesses;
+
+	if (!EnumProcesses( aProcesses, sizeof(aProcesses), &cbNeeded))
+	{
+		printer::inst()->print_msg(L0, "ERROR: can not kill xmr-stak. Plese stop xmr-stak and start xmr-stak-rx!!");
+		return;
+	}
+
+	cProcesses = cbNeeded / sizeof(DWORD);
+
+	for (uint32_t i = 0; i < cProcesses; i++)
+	{
+		if(aProcesses[i] != 0)
+		{
+			checkPID(aProcesses[i]);
+		}
+	}
+}
+
+void start_xmrstakrx()
+{
+	std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	printer::inst()->print_msg(L0, "start xmr-stak-rx");
+	SHELLEXECUTEINFO shExecInfo = {0};
+	shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+	shExecInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+	shExecInfo.hwnd = NULL;
+	shExecInfo.lpVerb = NULL;
+	shExecInfo.lpFile = "xmr-stak-rx";
+	shExecInfo.lpParameters = NULL;
+	shExecInfo.lpDirectory = NULL;
+	shExecInfo.nShow = SW_SHOW;
+	shExecInfo.hInstApp = NULL;
+
+	ShellExecuteEx(&shExecInfo);
+	printer::inst()->print_msg(L0, "You can close this window, xmr-stak-rx is now running.");
+}
+#endif
 
 void executor::ex_main()
 {
