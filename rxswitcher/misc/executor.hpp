@@ -2,8 +2,8 @@
 
 
 #include "thdq.hpp"
-#include "xmrstak/misc/environment.hpp"
-#include "xmrstak/net/msgstruct.hpp"
+#include "rxswitcher/misc/environment.hpp"
+#include "rxswitcher/net/msgstruct.hpp"
 
 #include <array>
 #include <atomic>

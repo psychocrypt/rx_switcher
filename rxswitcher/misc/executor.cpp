@@ -22,12 +22,12 @@
   */
 
 #include "executor.hpp"
-#include "xmrstak/jconf.hpp"
-#include "xmrstak/net/jpsock.hpp"
-#include "xmrstak/net/socket.hpp"
+#include "rxswitcher/jconf.hpp"
+#include "rxswitcher/net/jpsock.hpp"
+#include "rxswitcher/net/socket.hpp"
 
-#include "xmrstak/misc/console.hpp"
-#include "xmrstak/version.hpp"
+#include "rxswitcher/misc/console.hpp"
+#include "rxswitcher/version.hpp"
 
 #include <algorithm>
 #include <assert.h>

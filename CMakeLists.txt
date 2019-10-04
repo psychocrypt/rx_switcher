@@ -1,4 +1,4 @@
-project(rx_switcher)
+project(rx-switcher)
 
 cmake_minimum_required(VERSION 3.4.0)
 #   https://cmake.org/cmake/help/v3.12/policy/CMP0074.html
@@ -213,21 +213,21 @@ endif()
 
 # compile generic backend files
 file(GLOB BACKEND_CPP
-    "xmrstak/*.cpp"
-    "xmrstak/misc/*.cpp"
-    "xmrstak/net/*.cpp")
+    "rxswitcher/*.cpp"
+    "rxswitcher/misc/*.cpp"
+    "rxswitcher/net/*.cpp")
 
 # compile final binary
-file(GLOB SRCFILES_CPP "xmrstak/cli/*.cpp")
+file(GLOB SRCFILES_CPP "rxswitcher/cli/*.cpp")
 set_source_files_properties(${SRCFILES_CPP} PROPERTIES LANGUAGE CXX)
 
-add_executable(rx_switcher ${BACKEND_CPP} ${SRCFILES_CPP})
+add_executable(rx-switcher ${BACKEND_CPP} ${SRCFILES_CPP})
 
 
 set(EXECUTABLE_OUTPUT_PATH "bin" CACHE STRING "Path to place executables relative to ${CMAKE_INSTALL_PREFIX}")
 set(LIBRARY_OUTPUT_PATH "bin" CACHE STRING "Path to place libraries relative to ${CMAKE_INSTALL_PREFIX}")
 
-target_link_libraries(rx_switcher ${LIBS})
+target_link_libraries(rx-switcher ${LIBS})
 
 ################################################################################
 # Install
@@ -235,7 +235,7 @@ target_link_libraries(rx_switcher ${LIBS})
 
 # do not install the binary if the project and install are equal
 if( NOT CMAKE_INSTALL_PREFIX STREQUAL PROJECT_BINARY_DIR )
-    install(TARGETS rx_switcher
+    install(TARGETS rx-switcher
             RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/${EXECUTABLE_OUTPUT_PATH}")
     if(CUDA_FOUND)
         if(WIN32)
@@ -257,5 +257,5 @@ if( NOT CMAKE_INSTALL_PREFIX STREQUAL PROJECT_BINARY_DIR )
     endif()
 else()
     # this rule is used if the install prefix is the build directory
-    install(CODE "MESSAGE(\"rx_switcher installed to folder 'bin'\")")
+    install(CODE "MESSAGE(\"rx-switcher installed to folder 'bin'\")")
 endif()

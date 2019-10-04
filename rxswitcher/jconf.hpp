@@ -1,7 +1,7 @@
 #pragma once
 
 #include "params.hpp"
-#include "xmrstak/misc/environment.hpp"
+#include "rxswitcher/misc/environment.hpp"
 
 #include <stdlib.h>
 #include <string>

@@ -21,11 +21,11 @@
   *
   */
 
-#include "xmrstak/jconf.hpp"
-#include "xmrstak/misc/console.hpp"
-#include "xmrstak/misc/executor.hpp"
-#include "xmrstak/params.hpp"
-#include "xmrstak/version.hpp"
+#include "rxswitcher/jconf.hpp"
+#include "rxswitcher/misc/console.hpp"
+#include "rxswitcher/misc/executor.hpp"
+#include "rxswitcher/params.hpp"
+#include "rxswitcher/version.hpp"
 
 
 #include <iostream>

@@ -21,7 +21,7 @@
   *
   */
 
-#include "xmrstak/misc/console.hpp"
+#include "rxswitcher/misc/console.hpp"
 
 #include <cstdlib>
 #include <stdarg.h>

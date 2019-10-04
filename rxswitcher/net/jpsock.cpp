@@ -30,11 +30,11 @@
 #include "socket.hpp"
 #include "socks.hpp"
 
-#include "xmrstak/jconf.hpp"
-#include "xmrstak/misc/executor.hpp"
-#include "xmrstak/misc/jext.hpp"
-#include "xmrstak/version.hpp"
-#include "xmrstak/misc/console.hpp"
+#include "rxswitcher/jconf.hpp"
+#include "rxswitcher/misc/executor.hpp"
+#include "rxswitcher/misc/jext.hpp"
+#include "rxswitcher/version.hpp"
+#include "rxswitcher/misc/console.hpp"
 
 using namespace rapidjson;
 

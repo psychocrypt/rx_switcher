@@ -1,7 +1,7 @@
 #pragma once
 
-#include "xmrstak/rapidjson/document.h"
-#include "xmrstak/rapidjson/error/en.h"
+#include "rxswitcher/rapidjson/document.h"
+#include "rxswitcher/rapidjson/error/en.h"
 
 using namespace rapidjson;
 

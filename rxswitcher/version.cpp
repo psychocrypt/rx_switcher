@@ -19,7 +19,7 @@
 #define BACKEND_TYPE unknown
 #endif
 
-#define XMR_STAK_NAME "rx_switcher"
+#define XMR_STAK_NAME "rx-switcher"
 #define XMR_STAK_VERSION "0.0.1"
 
 #if defined(_WIN32)

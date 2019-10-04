@@ -24,8 +24,8 @@
 #include "jconf.hpp"
 #include "params.hpp"
 
-#include "xmrstak/misc/console.hpp"
-#include "xmrstak/misc/jext.hpp"
+#include "rxswitcher/misc/console.hpp"
+#include "rxswitcher/misc/jext.hpp"
 
 #include <algorithm>
 #include <math.h>

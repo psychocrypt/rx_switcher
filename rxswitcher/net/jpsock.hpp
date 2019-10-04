@@ -1,7 +1,7 @@
 #pragma once
 
 #include "msgstruct.hpp"
-#include "xmrstak/jconf.hpp"
+#include "rxswitcher/jconf.hpp"
 
 #include <atomic>
 #include <condition_variable>

@@ -23,10 +23,10 @@
 
 #include "socket.hpp"
 #include "jpsock.hpp"
-#include "xmrstak/jconf.hpp"
-#include "xmrstak/misc/console.hpp"
-#include "xmrstak/misc/executor.hpp"
-#include "xmrstak/version.hpp"
+#include "rxswitcher/jconf.hpp"
+#include "rxswitcher/misc/console.hpp"
+#include "rxswitcher/misc/executor.hpp"
+#include "rxswitcher/version.hpp"
 
 #ifndef CONF_NO_TLS
 #include <openssl/err.h>

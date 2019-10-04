@@ -1,7 +1,7 @@
 find_path(
     RANDOMX_INCLUDE_DIR
     NAMES randomx.h
-    PATHS "${CMAKE_SOURCE_DIR}/xmrstak/backend/cpu/RandomX"
+    PATHS "${CMAKE_SOURCE_DIR}/rxswitcher/backend/cpu/RandomX"
     PATH_SUFFIXES "include"
     NO_DEFAULT_PATH
 )
@@ -11,7 +11,7 @@ find_path(RANDOMX_INCLUDE_DIR NAMES randomx.h)
 find_library(
     RANDOMX_LIBRARY
     NAMES librandomx.a randomx librandomx
-    PATHS "${CMAKE_SOURCE_DIR}/xmrstak/backend/cpu/RandomX"
+    PATHS "${CMAKE_SOURCE_DIR}/rxswitcher/backend/cpu/RandomX"
     PATH_SUFFIXES "lib"
     NO_DEFAULT_PATH
 )
