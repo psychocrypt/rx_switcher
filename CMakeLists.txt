@@ -71,6 +71,7 @@ option(CMAKE_LINK_STATIC "link as much as possible libraries static" OFF)
 ################################################################################
 
 if(NOT WIN32)
+    SET(THREADS_PREFER_PTHREAD_FLAG TRUE)
     find_package(Threads REQUIRED)
     set(LIBS ${LIBS} ${CMAKE_THREAD_LIBS_INIT})
 endif()
@@ -206,7 +207,7 @@ if(CMAKE_LINK_STATIC)
     set(DL_LIB ${CMAKE_DL_LIBS})
     set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
     if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
-        set(LIBS "-static-libgcc -static-libstdc++ ${LIBS}")
+        set(LIBS "${DL_LIB} -static-libgcc -static-libstdc++ ${LIBS}")
     endif()
 endif()
 
@@ -217,16 +218,25 @@ file(GLOB BACKEND_CPP
     "rxswitcher/misc/*.cpp"
     "rxswitcher/net/*.cpp")
 
+add_library(rx-switcher-backend
+    STATIC
+    ${BACKEND_CPP}
+)
+target_link_libraries(rx-switcher-backend ${CMAKE_DL_LIBS} ${LIBS})
+
+
 # compile final binary
 file(GLOB SRCFILES_CPP "rxswitcher/cli/*.cpp")
 set_source_files_properties(${SRCFILES_CPP} PROPERTIES LANGUAGE CXX)
 
-add_executable(rx-switcher ${BACKEND_CPP} ${SRCFILES_CPP})
+add_executable(rx-switcher ${SRCFILES_CPP})
 
 
 set(EXECUTABLE_OUTPUT_PATH "bin" CACHE STRING "Path to place executables relative to ${CMAKE_INSTALL_PREFIX}")
 set(LIBRARY_OUTPUT_PATH "bin" CACHE STRING "Path to place libraries relative to ${CMAKE_INSTALL_PREFIX}")
 
+target_link_libraries(rx-switcher ${CMAKE_DL_LIBS})
+target_link_libraries(rx-switcher rx-switcher-backend)
 target_link_libraries(rx-switcher ${LIBS})
 
 ################################################################################
