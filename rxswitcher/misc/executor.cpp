@@ -422,7 +422,7 @@ void executor::ex_main()
 
 	eval_pool_choice();
 
-	constexpr uint64_t fork_height = 2;
+	constexpr uint64_t fork_height = 1978433;
 
 	bool forked = false;
 

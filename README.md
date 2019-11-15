@@ -1,5 +1,5 @@
 ###### fireice-uk's and psychocrypt's
-# rx-switcher: switch xmr-stak to xmr-stak-rx
+# rx-switcher: switch xmr-stak to xmr-stak-rx when monero forks
 
 This tool based on xmr-stak. 
 The switcher is killing all `xmr-stak` instances on your system and starts automatically xmr-stak-rx as soon as the Monero network is forking to the POW randomX.
@@ -14,7 +14,7 @@ You can download rx-switcher precompiled along with [xmr-stak-rx](https://github
 5. as soon as the Monero network is forking `xmr-stak` will be stopped and `xmr-stak-rx` will automatically start
 6. after the network fork we suggest to start `xmr-stak-rx` directly and not use `rx-switcher anymore
 
-## Default Developer Donation
+## Developer Donation
 
 If you want to donate directly to support further development, here is my wallet
 
